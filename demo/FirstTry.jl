@@ -4,7 +4,6 @@ include("/home/will/code/sequence/Replay/PPSeq.jl/src/PPSeq.jl")
 const seq = PPSeq
 
 # Other Imports
-import PyPlot: plt
 import DelimitedFiles: readdlm
 import Random
 import StatsBase: quantile
