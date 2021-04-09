@@ -8,7 +8,7 @@ import PyPlot: plt
 import DelimitedFiles: readdlm
 import Random
 import StatsBase: quantile
-using CSV, DataFrames
+using CSV, DataFrames, Dates
 
 function save_results(results, run_id)
    
@@ -152,7 +152,7 @@ end
 
 # Songbird metadata
 num_neurons = 51 # use exact number of neurons -_-
-max_time = 2*1.0 # use float here
+max_time = 2*60.0 # use float here
 
 # Load spikes.
 spikes = seq.Spike[]
@@ -211,4 +211,4 @@ model = seq.construct_model(config, max_time, num_neurons)
 results = seq.easy_sample!(model, spikes, init_assignments, config);
 
 # Save the results
-save_results(results, "../test_fcn")
+save_results(results, "../Simple"*Dates.format(now(),"HH:MM"))
