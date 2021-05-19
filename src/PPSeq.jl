@@ -82,6 +82,8 @@ include("./algorithms/split_merge.jl")
  # Easy one-stop-shop sampling function.
 include("./algorithms/easy_sample.jl")
 
+include("./algorithms/easy_sample_masked.jl")
+
 # === USER-FACING UTILS AND HELPER FUNCTIONS === #
 
  # Model configuration.
