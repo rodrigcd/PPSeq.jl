@@ -1,6 +1,23 @@
+## Program to run PPSeq on a section of data
+
+# INPUTS:
+
+# PPSeq_file = the PPSeq.jl file to use
+# Data_directory = where to find the data to use
+# Time = how long the segment is MUST BE FLOAT
+# Neurons = how many neurons being used MUST BE INTEGER
+
+if size(ARGS) != (4,)
+    error("Not correct number of command line arguments")
+end
+
+PPSeq_file = ARGS[1]
+Data_directory = ARGS[2]
+max_time = parse(Float64, ARGS[3])
+num_neurons = parse(Int64, ARGS[4])
+
 # Import PPSeq
-include("/home/will/code/sequence/Replay/PPSeq.jl/src/PPSeq.jl")
-#import PPSeq
+include(PPSeq_file)
 const seq = PPSeq
 
 # Other Imports
@@ -147,15 +164,9 @@ function save_results(results, run_id)
    
 end
 
-
-
-# Songbird metadata
-num_neurons = 51 # use exact number of neurons -_-
-max_time = 2*60.0 # use float here
-
 # Load spikes.
 spikes = seq.Spike[]
-file_name = "/home/will/code/sequence/Replay/PPSeq.jl/demo/data/emmet_data.txt"
+file_name = Data_directory
 for (n, t) in eachrow(readdlm(file_name, '\t', Float64, '\n'))
     push!(spikes, seq.Spike(Int(n), t))
 end
@@ -210,4 +221,4 @@ model = seq.construct_model(config, max_time, num_neurons)
 results = seq.easy_sample!(model, spikes, init_assignments, config);
 
 # Save the results
-save_results(results, "../Simple"*Dates.format(now(),"HH:MM"))
+save_results(results, "../Simple"*Dates.format(Dates.now(),"HH:MM"))
