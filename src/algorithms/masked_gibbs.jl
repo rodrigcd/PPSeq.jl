@@ -21,17 +21,20 @@ function masked_gibbs!(
     sampled_spikes = Spike[]
     sampled_assignments = Int64[]
 
+    # Extract some things from model
+    max_time = get_max_time(model)
+
     # Compute proportion of the data that is masked.
     masked_proportion = 0.0
     for (_, (t0, t1)) in masks
         masked_proportion += (t1 - t0)
     end
-    masked_proportion /= (model.max_time * num_neurons(model))
+    masked_proportion /= (max_time * num_neurons(model))
     @show masked_proportion
 
     # Create inverted masks to compute train log likelihood.
     inv_masks = compute_complementary_masks(
-        masks, num_neurons(model), model.max_time)
+        masks, num_neurons(model), max_time)
 
     # Sanity check.
     assert_spikes_in_mask(masked_spikes, masks)
@@ -124,8 +127,8 @@ function masked_gibbs!(
     recompute!(model, unmasked_spikes, unmasked_assignments)
 
     # Rescale train and test log likelihoods.
-    train_log_p_hist ./= ((1 - masked_proportion) * model.max_time * num_neurons(model))
-    test_log_p_hist ./= (masked_proportion * model.max_time * num_neurons(model))
+    train_log_p_hist ./= ((1 - masked_proportion) * max_time * num_neurons(model))
+    test_log_p_hist ./= (masked_proportion * max_time * num_neurons(model))
 
     return (
         unmasked_assignments,
@@ -195,18 +198,20 @@ function annealed_masked_gibbs!(
 
         # Recompute probability of introducing a new cluster.
         #  ==> TODO: maybe set_priors! should do this automatically?
+        max_time = get_max_time(model)
         prior = priors(model)
         α = prior.seq_event_amplitude.α
         β = prior.seq_event_amplitude.β
         λ = prior.seq_event_rate
         set_new_cluster_log_prob!(
             model,
-            log(α) + log(λ) + log(model.max_time) + α * (log(β) - log(1 + β))
+            log(α) + log(λ) + log(max_time) + α * (log(β) - log(1 + β))
         )
-        model.bkgd_log_prob = (
-            log(model.globals.bkgd_amplitude)
-            + log(model.max_time)
-            + log(1 + β)
+        set_bkgd_log_prob!(
+            model,
+            (log(get_bkgd_amplitude(model))
+            + log(max_time)
+            + log(1 + β))
         )
 
         # Draw gibbs samples.
@@ -296,15 +301,16 @@ function sample_masked_spikes!(
 
     empty!(spikes)
     empty!(assignments)
+    max_time = get_max_time(model)
     globals = model.globals
 
     # Sample background spikes.
     S_bkgd = rand(Poisson(
-        globals.bkgd_amplitude * model.max_time))
+        get_bkgd_amplitude(model) * max_time))
     bkgd_dist = Categorical(exp.(globals.bkgd_log_proportions))
 
     n_bkgd = rand(bkgd_dist, S_bkgd)
-    t_bkgd = rand(S_bkgd) * model.max_time
+    t_bkgd = rand(S_bkgd) * max_time
 
     for (sampled_n, sampled_t) in zip(n_bkgd, t_bkgd)
         for (n, (start, stop)) in masks
