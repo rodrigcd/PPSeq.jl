@@ -13,7 +13,7 @@ import SpecialFunctions: logabsgamma, logfactorial
 import StatsFuns: softmax!, softmax, logaddexp, logsumexp, normlogpdf, normpdf
 import Distributions
 import Distributions: cdf
-import PyPlot: plt
+# import PyPlot: plt
 
 # === EXPORTS === #
 
