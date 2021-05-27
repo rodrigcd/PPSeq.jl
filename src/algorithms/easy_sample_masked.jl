@@ -17,7 +17,7 @@ function easy_sample_masked!(
     # Save copy of initial assignments.
     _inits = copy(initial_assignments)
 
-    # Draw annealed masekd Gibbs samples.
+    # Draw annealed masked Gibbs samples.
     (
         unmasked_assignments,
         anneal_assignment_hist,

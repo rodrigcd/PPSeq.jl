@@ -416,7 +416,6 @@ function create_random_mask(
 
     T_masked = percent_masked * max_time * num_neurons / 100.0
     n_masks = Int(round(T_masked / mask_lengths))
-
     intervals = Tuple{Float64, Float64}[]
     for start in range(0, max_time - mask_lengths, step=mask_lengths)
         push!(intervals, (start, start + mask_lengths))
@@ -451,7 +450,6 @@ function split_spikes_by_mask(
         spikes::Vector{Spike},
         masks::Vector{Mask}
     )
-
     # Save list of spikes that are masked out.
     masked_spikes = Spike[]
     unmasked_spikes = Spike[]
@@ -509,4 +507,51 @@ function assert_spikes_not_in_mask(
             end
         end
     end
+end
+
+function clean_masks(
+    masks::Vector{Mask},
+    num_neurons::Integer
+)
+    new_masks = Mask[]
+    for n = 1:num_neurons
+        # Find the masks corresponding to thie neuron
+        this_neur_masks = Mask[]
+        for mask = 1:length(masks)
+            if masks[mask][1] == n
+                push!(this_neur_masks, masks[mask])
+            end
+        end
+
+        # Find the start of mask times for this neuron
+        start_times = []
+        for (n,(t0,t1)) in this_neur_masks
+            push!(start_times, t0)
+        end
+
+        # Sort them
+        start_times_indices = sortperm(start_times)
+        sorted_mask = this_neur_masks[start_times_indices]
+
+        # Find the offending masks
+        indices_to_delete = []
+        for index = 1:(length(sorted_mask)-1)
+            if (sorted_mask[index+1][2][1] - sorted_mask[index][2][2] < 0.0001)
+                push!(indices_to_delete, index)
+            end
+        end
+
+        # Go through and remove them
+        counter = 0
+        for index = 1:length(sorted_mask)
+            if index in indices_to_delete
+                counter = counter + 1
+            else
+                push!(new_masks, (sorted_mask[index][1],(sorted_mask[index-counter][2][1],sorted_mask[index][2][2])))
+                counter = 0
+            end
+        end
+    end
+
+    return new_masks
 end
