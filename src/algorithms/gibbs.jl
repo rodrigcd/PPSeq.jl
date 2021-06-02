@@ -91,11 +91,13 @@ function gibbs_sample!(
 
             # Display progress.
             verbose && print(s, "-")
+            flush(stdout)
         end
     end
 
     # Finish progress bar.
     verbose && (n_saved_samples > 0) && println("Done")
+    flush(stdout)
 
     return (
         assignments,

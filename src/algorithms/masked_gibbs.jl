@@ -115,10 +115,12 @@ function masked_gibbs!(
         append!(globals_hist, _globals)
 
         verbose && print(i * samples_per_resample, "-")
+        flush(stdout)
 
     end
 
     verbose && println("Done")
+    flush(stdout)
 
     # Before returning, remove assignments assigned to imputed spikes.
     recompute!(model, unmasked_spikes, unmasked_assignments)
@@ -175,6 +177,7 @@ function annealed_masked_gibbs!(
         
         # Print progress.
         verbose && println("TEMP:  ", temp)
+        flush(stdout)
 
         # Anneal prior on sequence amplitude.
         prior = priors(model)
