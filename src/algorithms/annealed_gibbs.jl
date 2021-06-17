@@ -5,7 +5,7 @@ function annealed_gibbs!(
         model::Union{SeqModel,DistributedSeqModel},
         spikes::Vector{Spike},
         initial_assignments::Vector{Int64},
-        config::Dict,
+        config::Dict;
         verbose::Bool=false
     )
 
@@ -91,10 +91,10 @@ function annealed_gibbs!(
             model,
             spikes,
             assignments,
-            samples_per_anneal,
-            extra_split_merge_moves,
-            split_merge_window,
-            save_every,
+            config[:samples_per_anneal],
+            config[:split_merge_moves_during_anneal],
+            config[:save_every_during_anneal],
+            config;
             verbose=verbose
         )
 

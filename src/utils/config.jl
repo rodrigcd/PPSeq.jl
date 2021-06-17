@@ -78,24 +78,26 @@ end
 Takes a model and sets the neuron response parameters for the first R_sacred sequences to those from 
 another (previously trained) model. 
 """
-function sanctify_model(model::SeqModel,
-                        sacred_neuron_responses::Matrix{Float64}, #  neuron responses from old model to be written into new one, shape = (3 x R_sacred) x N_nuerons 
+function sanctify_model(
+    model::Union{SeqModel,DistributedSeqModel},
+    sacred_neuron_responses::Matrix{Float64}, #  neuron responses from old model to be written into new one, shape = (3 x R_sacred) x N_nuerons 
+    config::Dict
+    )
 
     if (:num_threads in keys(config)) && config[:num_threads] > 0
         globals = model.primary_model.globals
     else
         globals = model.globals
+    end
 
-    number_sacred_sequences = Int(size(sacred_neuron_responses)[2] / 3)
+    number_sacred_sequences = size(sacred_neuron_responses)[2]÷3
 
     print("Size of offsets = "*string(size(globals.neuron_response_offsets)))
-    print("Offset[1,1] before: "*string(neuron_response_log_proportions[1,1])*"     Offset[1,-1] before: "*string(neuron_response_log_proportions[1,Int(size(neuron_response_log_proportions)[2])]))
+    print("Offset[1,1] before: "*string(globals.neuron_response_log_proportions[1,1])*"     Offset[1,-1] before: "*string(globals.neuron_response_log_proportions[1,Int(size(globals.neuron_response_log_proportions)[2])]))
     globals.neuron_response_log_proportions[:,1:number_sacred_sequences] = sacred_neuron_responses[:,1:5]
     globals.neuron_response_offsets[:,1:number_sacred_sequences] = sacred_neuron_responses[:,6:10]
     globals.neuron_response_widths[:,1:number_sacred_sequences] = sacred_neuron_responses[:,11:15]
-    print("Offset[1,1] after: "*string(neuron_response_log_proportions[1,1])*"     Offset[1,-1] after: "*string(neuron_response_log_proportions[1,Int(size(neuron_response_log_proportions)[2])]))
+    print("Offset[1,1] after: "*string(globals.neuron_response_log_proportions[1,1])*"     Offset[1,-1] after: "*string(globals.neuron_response_log_proportions[1,Int(size(globals.neuron_response_log_proportions)[2])]))
 
     return model
-
-    
-    
+end

@@ -5,14 +5,14 @@ function gibbs_sample!(
     model::DistributedSeqModel,
     spikes::Vector{Spike},
     initial_assignments::Vector{Int64},
-    config::Dict,
+    num_samples::Int64,
+    extra_split_merge_moves::Int64,
+    save_every::Int64,
+    config::Dict;
     verbose=false
 )
 
-    num_samples = config[:num_samples]
-    extra_split_merge_moves = config[:extra_split_merge_moves]
     split_merge_window = config[:split_merge_window]
-    save_every = config[:save_every]
     
     if extra_split_merge_moves > 0
         @warn "Split merge not implemented for distributed model."
@@ -107,10 +107,10 @@ function gibbs_sample!(
         collect_assignments!(model, assignments, assgn_partition, partition_ids)
 
         # Update latent events.
-        gibbs_update_latents!(model.primary_model)
+        gibbs_update_latents!(model.primary_model, config)
 
         # Update globals
-        gibbs_update_globals!(model.primary_model, spikes, assignments)
+        gibbs_update_globals!(model.primary_model, spikes, assignments, config)
 
         # No need to pass updates to submodels, since the globals
         # and events point to the same objects.

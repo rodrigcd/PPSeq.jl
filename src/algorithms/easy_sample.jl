@@ -49,6 +49,9 @@ function easy_sample!(
         model,
         spikes,
         assignments,
+        config[:samples_after_anneal],
+        config[:split_merge_moves_after_anneal],
+        config[:save_every_after_anneal],
         config;
         verbose=true
     )

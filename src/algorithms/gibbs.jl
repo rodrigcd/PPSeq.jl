@@ -6,14 +6,14 @@ function gibbs_sample!(
         model::SeqModel,
         spikes::Vector{Spike},
         initial_assignments::Vector{Int64},
-        config::Dict,
+        num_samples::Int64,
+        extra_split_merge_moves::Int64,
+        save_every::Int64,
+        config::Dict;
         verbose::Bool=false
     )
 
-    num_samples = config[:num_samples]
-    extra_split_merge_moves = config[:extra_split_merge_moves]
     split_merge_window = config[:split_merge_window]
-    save_every = config[:save_every]
 
     # Initialize spike assignments.
     assignments = initial_assignments
@@ -349,13 +349,18 @@ function gibbs_update_globals!(
 
         end
 
+        map!(
+            log,
+            globals.neuron_response_log_proportions[:,r],
+            globals.neuron_response_log_proportions[:,r]
+        )
     end
 
-    map!(
-        log,
-        globals.neuron_response_log_proportions,
-        globals.neuron_response_log_proportions
-    )
+#    map!(
+#        log,
+#        globals.neuron_response_log_proportions,
+#        globals.neuron_response_log_proportions
+#    )
     # === RECOMPUTE NEW CLUSTER PROBABILITIES === #
 
     α = priors.seq_event_amplitude.α
