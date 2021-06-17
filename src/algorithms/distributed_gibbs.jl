@@ -5,13 +5,15 @@ function gibbs_sample!(
     model::DistributedSeqModel,
     spikes::Vector{Spike},
     initial_assignments::Vector{Int64},
-    num_samples::Int64,
-    extra_split_merge_moves::Int64,
-    split_merge_window::Float64,
-    save_every::Int64;
+    config::Dict,
     verbose=false
 )
 
+    num_samples = config[:num_samples]
+    extra_split_merge_moves = config[:extra_split_merge_moves]
+    split_merge_window = config[:split_merge_window]
+    save_every = config[:save_every]
+    
     if extra_split_merge_moves > 0
         @warn "Split merge not implemented for distributed model."
     end

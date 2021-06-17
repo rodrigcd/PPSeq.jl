@@ -9,6 +9,7 @@ function easy_sample!(
         spikes::Vector{Spike},
         initial_assignments::Vector{Int64},
         config::Dict
+
     )
 
     # Save copy of initial assignments.
@@ -26,12 +27,7 @@ function easy_sample!(
         model,
         spikes,
         initial_assignments,
-        config[:num_anneals],
-        config[:samples_per_anneal],
-        config[:max_temperature],
-        config[:split_merge_moves_during_anneal],
-        config[:split_merge_window],
-        config[:save_every_during_anneal];
+        config;
         verbose=true
     )
 
@@ -53,10 +49,7 @@ function easy_sample!(
         model,
         spikes,
         assignments,
-        config[:samples_after_anneal],
-        config[:split_merge_moves_after_anneal],
-        config[:split_merge_window],
-        config[:save_every_after_anneal];
+        config;
         verbose=true
     )
 

@@ -5,14 +5,12 @@ function annealed_gibbs!(
         model::Union{SeqModel,DistributedSeqModel},
         spikes::Vector{Spike},
         initial_assignments::Vector{Int64},
-        num_anneals::Int64,
-        samples_per_anneal::Int64,
-        max_temperature::Float64,
-        extra_split_merge_moves::Int64,
-        split_merge_window::Float64,
-        save_every::Int64;
+        config::Dict,
         verbose::Bool=false
     )
+
+    num_anneals = config[:num_anneals]
+    max_temperature = config[:max_temperature]
 
     # Initialize storage.
     assignment_hist = zeros(Int64, length(spikes), 0)
