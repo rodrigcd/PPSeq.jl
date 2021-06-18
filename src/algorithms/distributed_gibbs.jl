@@ -135,11 +135,9 @@ function gibbs_sample!(
             push!(globals_hist, deepcopy(model.primary_model.globals))
 
             verbose && print(s, "-")
-            flush(stdout)
         end
     end
     verbose && println("Done")
-    flush(stdout)
 
     return (
         assignments,

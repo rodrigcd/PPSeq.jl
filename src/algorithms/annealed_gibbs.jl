@@ -41,7 +41,6 @@ function annealed_gibbs!(
         
         # Print progress.
         verbose && println("TEMP:  ", temp)
-        flush(stdout)
 
         # Anneal prior on sequence amplitude.
         prior = priors(model)
