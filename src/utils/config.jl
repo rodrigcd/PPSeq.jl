@@ -94,9 +94,9 @@ function sanctify_model(
 
     print("Size of offsets = "*string(size(globals.neuron_response_offsets)))
     print("Offset[1,1] before: "*string(globals.neuron_response_log_proportions[1,1])*"     Offset[1,-1] before: "*string(globals.neuron_response_log_proportions[1,Int(size(globals.neuron_response_log_proportions)[2])]))
-    globals.neuron_response_log_proportions[:,1:number_sacred_sequences] = sacred_neuron_responses[:,1:5]
-    globals.neuron_response_offsets[:,1:number_sacred_sequences] = sacred_neuron_responses[:,6:10]
-    globals.neuron_response_widths[:,1:number_sacred_sequences] = sacred_neuron_responses[:,11:15]
+    globals.neuron_response_log_proportions[:,1:number_sacred_sequences] = sacred_neuron_responses[:,1:number_sacred_sequences]
+    globals.neuron_response_offsets[:,1:number_sacred_sequences] = sacred_neuron_responses[:,number_sacred_sequences+1:2*number_sacred_sequences]
+    globals.neuron_response_widths[:,1:number_sacred_sequences] = sacred_neuron_responses[:,2*number_sacred_sequences+1:3*number_sacred_sequences]
     print("Offset[1,1] after: "*string(globals.neuron_response_log_proportions[1,1])*"     Offset[1,-1] after: "*string(globals.neuron_response_log_proportions[1,Int(size(globals.neuron_response_log_proportions)[2])]))
 
     return model
