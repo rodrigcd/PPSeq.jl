@@ -322,6 +322,7 @@ function gibbs_update_globals!(
     """
     for r = 1+config[:sacred_sequences]:R
 
+        print(r)
         rand!(
             posterior(
                 view(spk_count, :, r),
@@ -347,11 +348,8 @@ function gibbs_update_globals!(
 
         end
 
-        map!(
-            log,
-            globals.neuron_response_log_proportions[:,r],
-            globals.neuron_response_log_proportions[:,r]
-        )
+        # Now take logarithm of the log_proportions
+        globals.neuron_response_log_proportions[:,r] = log.(globals.neuron_response_log_proportions[:,r])
     end
 
 #    map!(
