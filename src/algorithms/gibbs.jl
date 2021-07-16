@@ -322,7 +322,6 @@ function gibbs_update_globals!(
     """
     for r = 1+config[:sacred_sequences]:R
 
-        print(r)
         rand!(
             posterior(
                 view(spk_count, :, r),
