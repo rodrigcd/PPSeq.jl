@@ -16,6 +16,9 @@ function default_warps(num_warp_values::Int64,
     @assert warp_variance >= 0
     allowed_warp_types = (0,1,2,3)
     @assert any(x->x==warp_type, allowed_warp_types) "only warp values 0 - 3 implemented"
+    if warp_type > 1
+        @assert mod(num_warp_values, 2) == 0 "When using negative warps number of warp values must be even at the moment!"
+    end
 
     # Initialize the warp parameters.
     if num_warp_values == 1
@@ -35,20 +38,21 @@ function default_warps(num_warp_values::Int64,
         warp_log_proportions .-= logsumexp(warp_log_proportions)
 
     elseif warp_type == 2 # Log-spaced values between 1/τ_max and τ_max, both positive and negative
-        warp_values = τ_max .^ range(-1, 1, length=num_warp_values)
+        warp_values = τ_max .^ range(-1, 1, length=num_warp_values÷2)
         # Set a mean-zero Gaussian prior on the log warp values
-        warp_log_proportions = -0.5 / warp_variance * range(-1, 1, length=num_warp_values) .^ 2
+        warp_log_proportions = -0.5 / warp_variance * range(-1, 1, length=num_warp_values÷2) .^ 2
         warp_values = vcat(warp_values, (-1).*warp_values)
         warp_log_proportions = vcat(warp_log_proportions, warp_log_proportions)
         warp_log_proportions .-= logsumexp(warp_log_proportions)
 
     elseif warp_type == 3 # Log-spaced values between 1 and τ_max, both positive and negative
-        warp_values = τ_max .^ range(0, 1, length=num_warp_values)
+        warp_values = τ_max .^ range(0, 1, length=num_warp_values÷2)
         # Set a mean-zero Gaussian prior on the log warp values
-        warp_log_proportions = -0.5 / warp_variance * range(0, 1, length=num_warp_values) .^ 2
+        warp_log_proportions = -0.5 / warp_variance * range(0, 1, length=num_warp_values÷2) .^ 2
         warp_values = vcat(warp_values, (-1).*warp_values)
         warp_log_proportions = vcat(warp_log_proportions, warp_log_proportions)
         warp_log_proportions .-= logsumexp(warp_log_proportions)
+    end
 
     warp_values, warp_log_proportions
 end

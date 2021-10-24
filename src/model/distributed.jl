@@ -8,7 +8,7 @@ function DistributedSeqModel(
     num_warp_values::Int64,
     max_warp::Float64,
     warp_variance::Float64,
-    warp_type::In64,
+    warp_type::Int64,
 
     # priors
     seq_event_rate::Float64,
