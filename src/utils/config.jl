@@ -53,6 +53,7 @@ function construct_model(config::Dict,
         config[:num_warp_values],
         config[:max_warp],
         config[:warp_variance],
+        config[:warp_type],
 
         # priors
         config[:seq_event_rate],
