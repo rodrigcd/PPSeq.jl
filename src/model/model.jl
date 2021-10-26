@@ -31,10 +31,10 @@ function default_warps(num_warp_values::Int64,
         warp_log_proportions = -0.5 / warp_variance * range(-1, 1, length=num_warp_values) .^ 2
         warp_log_proportions .-= logsumexp(warp_log_proportions)
 
-    elseif warp_type == 1 # Log-spaced values between 1 and τ_max
-        warp_values = τ_max .^ range(0, 1, length=num_warp_values)
+    elseif warp_type == 1 # Log-spaced values between 1]τ_max and 1
+        warp_values = τ_max .^ range(-1, 0, length=num_warp_values)
         # Set a mean-zero Gaussian prior on the log warp values
-        warp_log_proportions = -0.5 / warp_variance * range(0, 1, length=num_warp_values) .^ 2
+        warp_log_proportions = -0.5 / warp_variance * range(-1, 0, length=num_warp_values) .^ 2
         warp_log_proportions .-= logsumexp(warp_log_proportions)
 
     elseif warp_type == 2 # Log-spaced values between 1/τ_max and τ_max, both positive and negative
@@ -45,10 +45,10 @@ function default_warps(num_warp_values::Int64,
         warp_log_proportions = vcat(warp_log_proportions, warp_log_proportions)
         warp_log_proportions .-= logsumexp(warp_log_proportions)
 
-    elseif warp_type == 3 # Log-spaced values between 1 and τ_max, both positive and negative
-        warp_values = τ_max .^ range(0, 1, length=num_warp_values÷2)
+    elseif warp_type == 3 # Log-spaced values between 1/τ_max and 1, both positive and negative
+        warp_values = τ_max .^ range(-1, 0, length=num_warp_values÷2)
         # Set a mean-zero Gaussian prior on the log warp values
-        warp_log_proportions = -0.5 / warp_variance * range(0, 1, length=num_warp_values÷2) .^ 2
+        warp_log_proportions = -0.5 / warp_variance * range(-1, 0, length=num_warp_values÷2) .^ 2
         warp_values = vcat(warp_values, (-1).*warp_values)
         warp_log_proportions = vcat(warp_log_proportions, warp_log_proportions)
         warp_log_proportions .-= logsumexp(warp_log_proportions)
