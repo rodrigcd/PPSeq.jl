@@ -170,6 +170,19 @@ function recompute!(
 end
 
 
+function recompute!(
+    model::DistributedSeqModel,
+    spikes,
+    assignments,
+)
+    # Partition spikes.
+    spk_partition, assgn_partition, partition_ids = partition_spikes(model, spikes, assignments)
+
+    # Pass assignments to submodels
+    recompute!.(model.submodels, spk_partition, assgn_partition)
+end
+
+
 """
 Returns a vector of EventSummaryInfo structs
 summarizing latent events and throwing away
